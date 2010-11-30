@@ -7,7 +7,7 @@ Requirements
 * symfony 1.3
 * Propel or Doctrine
 * pdo_mysql (not tested with others databases)
-* jQuery
+* ExtJs
 
 Installation
 ------------
