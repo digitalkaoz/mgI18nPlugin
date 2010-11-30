@@ -12,9 +12,8 @@ Requirements
 Installation
 ------------
 
- * edit your factories.yml 
+ * edit your **factories.yml**
 
-        [yml]            
         all:
           # ...
           i18n:
@@ -35,9 +34,8 @@ Installation
                   lifetime:                  86400
                   prefix:                    %SF_APP_DIR%
 
- * you can change the default doctrine connection's name by editing your app.yml file
+ * you can change the default doctrine connection's name by editing your **app.yml** file
 
-        [yml]
         all:
           # ...
           mgI18nPlugin:
@@ -49,9 +47,8 @@ Installation
    you can use 2 databases : a project database and a translation database. Separating
    databases help you to manage different staging.
 
- * (optional) edit the databases.yml file to add the mg_i18n_plugin connection.
+ * (optional) edit the **databases.yml** file to add the mg_i18n_plugin connection.
 
-        [yml]
         mg_i18n_plugin:
           class: sfDoctrineDatabase
           param:
@@ -61,26 +58,23 @@ Installation
 
  * install the table
 
-        [php]
         ./symfony i18n:mg-create-table frontend
 
- * Install jQuery, 2 options
+ * Install ExtJS, 2 options
 
-    * update the view.yml
+    * update the **view.yml**
 
-            [yml]
-            javascripts:
-              - http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
-              - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js
+            #javascripts:
+            #  - http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
+            #  - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js
 
-            stylesheets:
-              - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/redmond/jquery-ui.css
+            #stylesheets:
+            #  - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/redmond/jquery-ui.css
 
    * or manage your way ;)
 
  * publish plugin asset
  
-        [php]
         ./symfony plugin:publish-assets
 
  * install plugin translation for each application
@@ -88,9 +82,8 @@ Installation
         ./symfony i18n:mg-xliff-import frontend plugins/mgI18nPlugin/i18n/*
         ./symfony i18n:mg-xliff-import backend plugins/mgI18nPlugin/i18n/*
 
- * add the filter, edit the filters.yml (the filter add current page translation messages)
+ * add the filter, edit the **filters.yml** (the filter add current page translation messages)
 
-        [yml]
         i18n:
           class: mgI18nFilter
 
@@ -110,7 +103,6 @@ is to register to an event, and add the translation into an array.
 
  * connect to the event
 
-        [php]
         class ProjectConfiguration extends sfProjectConfiguration
         {
           public function setup()
@@ -127,7 +119,6 @@ is to register to an event, and add the translation into an array.
 
  * Create a class `mgI18nAjaxTranslation`
 
-        [php]
         class mgI18nAjaxTranslation extends mgI18nMessageHelper
         {
 
@@ -159,7 +150,6 @@ super admin. This behavior is controlled by the mgI18nUser class. Copy-and-paste
 this class into the project|application lib folder and customize the logic
 depends on the specification.
 
-    [php]
     class mgI18nUser
     {
 
@@ -189,5 +179,4 @@ Note
 
 You can import xliff catalogue with the command : 
 
-        [php]
         ./symfony i18n:mg-xliff-import frontend PATH_TO_YOUR_CATALOGUES/*|YOUR_CATALOGUE
