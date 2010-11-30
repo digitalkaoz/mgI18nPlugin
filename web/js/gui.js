@@ -40,7 +40,12 @@ Ext.onReady(function(){
                         plain:true,
                         items:[
                           createGrid(file_url,'file-grid','file-store')
-                        ]
+                        ],
+                        listeners: {
+                          show: function(panel){
+                            panel.findByType('grid')[0].getStore().load();
+                          }
+                        }
                       },
                       { 
                         xtype: 'panel',
@@ -50,7 +55,12 @@ Ext.onReady(function(){
                         plain:true,
                         items:[
                           createGrid(database_url,'database-grid','database-store')
-                        ]
+                        ],
+                        listeners: {
+                          show: function(panel){
+                            panel.findByType('grid')[0].getStore().load();
+                          }
+                        }
                       }
                     ]
                   })
@@ -128,6 +138,7 @@ function createGrid(url, id, storeId,data){
         hidden:true
     }],
     id: id,
+    loadMask: true,
     tbar: [
       {
         text: 'hide translated',
@@ -203,7 +214,6 @@ function createStore(id, url, data){
             destroy : {url: url, method:'POST'}
         }    
       });      
-      //config.autoLoad = true;
     }
     
   return new Ext.data.GroupingStore(config);
