@@ -1,3 +1,220 @@
+Ext.onReady(function(){
+    var win;
+    var button = Ext.get('translation-trigger');
+
+    button.on('click', function(){
+        // create the window on the first click and reuse on subsequent clicks
+        if(!win){
+            win = new Ext.Window({
+                applyTo:'translation-window',
+                layout:'fit',
+                width:700,
+                height:450,
+                modal: true,
+                closeAction:'hide',
+                plain: true,
+                items: [
+                  new Ext.TabPanel({
+                    activeTab:0,
+                    deferredRender:false,
+                    border:false,
+                    items:[
+                      { 
+                        xtype: 'panel',
+                        title: 'current',
+                        layout: 'border',
+                        
+                        frame:false,
+                        plain:true,
+                        items:[
+                          createCurrentGrid(current_url),
+                          createFormPanel(transunits)
+                        ]
+                      },
+                      { 
+                        xtype: 'panel',
+                        title: 'database',
+                        layout: 'fit',
+                        frame:false,
+                        plain:true,
+                        items:[
+                          createDatabaseGrid(database_url)
+                        ]
+                      }
+                    ]
+                  })
+                ]
+            });
+                      
+        }
+        
+        win.show(this);        
+    });
+});
+
+function createFormPanel(transunits){
+  var fields = new Array();
+  
+  Ext.each(transunits,function(unit){
+    this.push(new Ext.form.TextArea({
+      id: unit.code,
+      width: '90%',
+      labelStyle: 'font-weight:bold;',
+      grow: true,      
+      fieldLabel : unit.name,
+      name       : unit.code
+    }));
+  },fields);
+
+  return new Ext.form.FormPanel({
+    split: true,
+    plain:true,
+    frame:false,
+    id: 'current-translation-form',
+    region     : 'east',
+    autoScroll: true,
+    layout     : 'form',    
+    bodyStyle  : {
+      padding: '2% 5%'
+    },
+    labelAlign : 'top',
+    labelWidth : 100,
+    width      : 250,
+    items: fields,
+    buttons: [
+      {text: 'Save'}
+    ]
+  });
+}
+
+function createDatabaseGrid(url){
+  return new Ext.grid.GridPanel({
+    columns:[{
+        header: "catalog",
+        dataIndex: 'catalog'
+    },{
+        header: "source",
+        dataIndex: 'source'
+    },{
+        header: "target",
+        dataIndex: 'target'
+    }],
+    id: 'database-grid',
+    plain:true,
+    frame:false,
+    stripeRows: true, // stripe alternate rows
+    store: new Ext.data.JsonStore({
+      proxy : new Ext.data.HttpProxy({
+        api: {
+            read    : {url: url, method:'GET'},
+            create  : {url: url, method:'POST'},
+            update  : {url: url, method:'POST'},
+            destroy : {url: url, method:'POST'}
+        }    
+      }),
+      id: 'database-store',
+      root: 'messages',
+      idProperty: 'id',      
+      fields: ['id','catalog','source','target','params', 'is_translated']
+      //autoLoad:true
+    })
+  });
+  
+}
+
+
+function createCurrentGrid(url){
+  return new Ext.grid.GridPanel({
+    region:'center',
+    columns:[{
+        header: "",
+        dataIndex: 'is_translated',
+        width:16,
+        renderer : function(val){
+          if(val){
+            return '<span class="silk-add">OK</span>';
+          }
+        }
+    },{
+        header: "catalog",
+        dataIndex: 'catalog',
+        hidden: true
+    },{
+        header: "source",
+        dataIndex: 'source'
+    },{
+      id:'target',
+        header: "target",
+        dataIndex: 'target'
+    },{
+        id:'params',
+        header: "params",
+        dataIndex: 'params',
+        hidden:true
+    }],
+    id: 'current-grid',
+    tbar: [
+      {
+        text: 'hide translated',
+        scope: this,
+        enableToggle: true,
+        handler : function(el){
+          if(el.pressed){
+            Ext.StoreMgr.get('current-store').filter('is_translated',false);
+          }else{
+            Ext.StoreMgr.get('current-store').filter('id');
+          }              
+        }
+      }
+    ],
+    plain:true,
+    frame:false,
+    //autoWidth:true,
+    autoExpandColumn : 'target',
+    stripeRows: true, // stripe alternate rows
+    view: new Ext.grid.GroupingView({
+        forceFit:true,
+        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+    }),
+    listeners:{
+      rowclick: function(grid,index){
+        var record = grid.getStore().getAt(index);
+        //form.getForm().loadRecord(record);
+        Ext.Ajax.request({
+           url: url,
+           autoAbort: true,
+           params: {
+             catalogue: record.data.catalog,
+             source: record.data.source
+           },
+           success : function(response, opts) {
+            var data = Ext.decode(response.responseText);
+            
+            var form = Ext.ComponentMgr.get('current-translation-form');
+            for(var i=0;i<data.length;i++){
+              if(form.findById(data[i].code)){
+                form.findById(data[i].code).setValue(data[i].value);
+              }
+            }
+           }
+        });
+      }
+    },
+    store: new Ext.data.GroupingStore({
+      groupField:'catalog',
+      id: 'current-store',
+      autoLoad: true,
+      data: _mg_i18n_messages,
+      reader : new Ext.data.JsonReader({
+        root: 'messages',
+        idProperty: 'id',
+        fields: ['catalog','id','is_translated','params','source','target']                          
+      })
+    })
+  });
+  
+}
+
 /*
  * This file is part of the mgWidgetsPlugin package.
  * (c) 2009 Thomas Rabaix <thomas.rabaix@soleoweb.com>
@@ -11,7 +228,7 @@
  * @package    mgI18nPlugin
  * @author     Thomas Rabaix <thomas.rabaix@soleoweb.com>
  * @version    SVN: $Id$
- */
+ *
 function mgI18nPlugin(options)
 {
 
@@ -389,4 +606,4 @@ mgI18nPlugin.prototype.loadTranslationTable = function(name, mg_i18n_messages)
     });
 
   this.displayLoading('hide');
-}
+}*/

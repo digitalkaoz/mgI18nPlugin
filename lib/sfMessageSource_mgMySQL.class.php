@@ -127,12 +127,15 @@ class sfMessageSource_mgMySQL extends sfMessageSource
   public function appendRequestedMessage($message_information, $catalogue)
   {
     // initialize parameters
-    if(!array_key_exists($catalogue, $this->untranslated))
+/*    if(!array_key_exists($catalogue, $this->untranslated))
     {
       $this->untranslated[$catalogue] = array();
     }
-    
-    $this->untranslated[$catalogue][md5($message_information['source'])] = $message_information;
+*/    
+    $this->untranslated[] = array_merge(array(
+            'id'=>md5($message_information['source']),
+            'catalog' => $catalogue
+        ),$message_information);
   }
   
   /**

@@ -49,7 +49,7 @@ class mgI18nFilter extends sfFilter
       $html = '';
       $html .=  get_component('mgI18nAdmin', 'displayTranslationBox');
       $html .= "<script>\n";
-      $html .= "\tvar _mg_i18n_messages = ".json_encode($this->context->getI18n()->getRequestedMessages());
+      $html .= "\tvar _mg_i18n_messages = ".json_encode(array('success'=>true,'messages'=>$this->context->getI18n()->getRequestedMessages()));
       $html .= "\n</script>\n";
 
       $response->setContent(substr($content, 0, $pos).$html.substr($content, $pos));

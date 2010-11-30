@@ -14,6 +14,46 @@
  * @version    SVN: $Id$
  */
  ?>
+<script>
+  current_url = '<?php echo url_for('@mg_i18n_get_targets') ?>';
+  database_url = '<?php echo url_for('@mg_i18n_get_messages?type=database') ?>';
+  
+  transunits = [
+  <?php foreach(sfConfig::get('app_mgI18nPlugin_cultures_available') as $code => $name): ?>
+    {code: '<?php echo $code?>', name:'<?php echo $name?>'},
+  <?php endforeach; ?>
+  ];
+</script>
+
+<button id="translation-trigger"><?php echo __('title_translation', null, 'mgI18nAdmin') ?></button>
+
+<div id="translation-window">
+  <div class="x-window-header"><span class="x-window-header-text"><?php echo __('title_translation', null, 'mgI18nAdmin') ?></span></div>
+</div>
+
+
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo $sf_request->getRelativeUrlRoot() ?>/mgI18nPlugin/css/translations-box.css" />
+
+<script type="text/javascript" src="http://dev.sencha.com/deploy/dev/examples/ux/TableGrid.js"></script>
+<script type="text/javascript" src="<?php echo $sf_request->getRelativeUrlRoot() ?>/mgI18nPlugin/js/gui.js" ></script>
+
+
+<?php
+/*
+ * This file is part of the mgWidgetsPlugin package.
+ * (c) 2009 Thomas Rabaix <thomas.rabaix@soleoweb.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ *
+ * @package    mgI18nPlugin
+ * @author     Thomas Rabaix <thomas.rabaix@soleoweb.com>
+ * @version    SVN: $Id$
+ *
+ ?>
 
 <!--
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" ></script>
@@ -132,4 +172,4 @@ else
   alert('Please add jQuery UI to see the translation tools');
 }
 
-</script>
+</script>*/

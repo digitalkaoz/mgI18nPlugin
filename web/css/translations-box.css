@@ -1,0 +1,14 @@
+button#translation-trigger{
+  position:absolute;
+  top:50px;
+  right:50px;
+  z-index: 1000;
+}
+
+#translation-window table{
+  width:100%;
+  margin:0;
+}
+#translation-window li{
+  list-style: none;
+}

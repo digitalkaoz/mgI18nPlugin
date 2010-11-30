@@ -55,13 +55,13 @@ class basemgI18nAdminActions extends sfActions
       $name_catalogue = $trans_unit['tc_name'];
       $culture = mgI18n::getLanguage($name_catalogue);
         
-      $json['mg-i18n-target-'.$culture] = $trans_unit['tu_target'];
+      $json[] = array('code'=>$culture,'value'=>$trans_unit['tu_target']);
       unset($cultures[$culture]);
     }
     
     foreach($cultures as $code => $name)
     {
-       $json['mg-i18n-target-'.$code] = '';
+       $json[] = array('code'=>$code,'value'=>'');
     }
     
     return $this->renderText(json_encode($json));
@@ -156,9 +156,7 @@ class basemgI18nAdminActions extends sfActions
       foreach($stm->fetchAll(PDO::FETCH_ASSOC) as $row)
       {
         
-        $start = strpos($row['tc_name'], '.') + 1;
-        $end   = strpos($row['tc_name'], '.', $start);
-        $catalogue = substr($row['tc_name'], $start , $end - $start);
+        $catalogue = $row['tc_name'];
 
         $messages[] = array(
           'message' => $row['tu_source'],
@@ -180,24 +178,21 @@ class basemgI18nAdminActions extends sfActions
    
       $catalogue = $this->getContext()->getConfiguration()->getApplication().'.'.$original_catalogue;
       
-      if(!array_key_exists($catalogue, $valid_messages))
-      {
-        $valid_messages[$catalogue] = array();
-      }
-
       $this->getContext()->getConfiguration()->loadHelpers(array('Text'));
 
-      $hash = md5($message['message']);
-      $valid_messages[$catalogue][$hash] = array(
+      $valid_messages[] = array(
+        'id'     => md5($catalogue.$message['message']),
+        'catalog'=> $catalogue,
         'source' => $message['message'],
         'target' => truncate_text($this->context->getI18n()->__($message['message'], null, $original_catalogue), 70),
-        'params' => isset($message['params']) ? $message['params'] : array(), // not fully implemented yet,
+        //'params' => isset($message['params']) ? $message['params'] : array(), // not fully implemented yet,
+          'params' => '',
         'is_translated' => $message['message'] != $this->context->getI18n()->__($message['message'], null, $original_catalogue)
       );
     }
 
     return $this->renderText(json_encode(array(
-      'type' => $type,
+      'success' => true,
       'messages' => $valid_messages
     )));
 
