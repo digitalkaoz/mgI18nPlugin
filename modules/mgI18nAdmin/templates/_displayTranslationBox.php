@@ -17,12 +17,20 @@
 <script>
   current_url = '<?php echo url_for('@mg_i18n_get_targets') ?>';
   database_url = '<?php echo url_for('@mg_i18n_get_messages?type=database') ?>';
+  file_url = '<?php echo url_for('@mg_i18n_get_messages?type=ajax_lib_application') ?>';
   
   transunits = [
   <?php foreach(sfConfig::get('app_mgI18nPlugin_cultures_available') as $code => $name): ?>
     {code: '<?php echo $code?>', name:'<?php echo $name?>'},
   <?php endforeach; ?>
   ];
+  
+  trans_current ='<?php echo __('tabs_translation_current_page', null, 'mgI18nAdmin') ?>';
+  trans_files ='<?php echo __('tabs_translation_ajax_lib_application', null, 'mgI18nAdmin') ?>',
+  trans_database = '<?php echo __('tabs_translation_db', null, 'mgI18nAdmin') ?>';
+  trans_source = '<?php echo __('header_source', null, 'mgI18nAdmin') ?>';
+  trans_target = '<?php echo __('header_target', null, 'mgI18nAdmin') ?>';
+  
 </script>
 
 <button id="translation-trigger"><?php echo __('title_translation', null, 'mgI18nAdmin') ?></button>

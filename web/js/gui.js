@@ -21,24 +21,35 @@ Ext.onReady(function(){
                     items:[
                       { 
                         xtype: 'panel',
-                        title: 'current',
+                        title: trans_current,
                         layout: 'border',
                         
                         frame:false,
                         plain:true,
                         items:[
-                          createCurrentGrid(current_url),
-                          createFormPanel(transunits)
+                          createGrid(current_url,'current-grid','current-store',_mg_i18n_messages),
+                          createFormPanel(transunits,'current-translation-form')
                         ]
                       },
                       { 
                         xtype: 'panel',
-                        title: 'database',
+                        title: trans_files,
+                        layout: 'border',
+                        
+                        frame:false,
+                        plain:true,
+                        items:[
+                          createGrid(file_url,'file-grid','file-store')
+                        ]
+                      },
+                      { 
+                        xtype: 'panel',
+                        title: trans_database,
                         layout: 'fit',
                         frame:false,
                         plain:true,
                         items:[
-                          createDatabaseGrid(database_url)
+                          createGrid(database_url,'database-grid','database-store')
                         ]
                       }
                     ]
@@ -52,7 +63,7 @@ Ext.onReady(function(){
     });
 });
 
-function createFormPanel(transunits){
+function createFormPanel(transunits, id){
   var fields = new Array();
   
   Ext.each(transunits,function(unit){
@@ -70,7 +81,7 @@ function createFormPanel(transunits){
     split: true,
     plain:true,
     frame:false,
-    id: 'current-translation-form',
+    id: id,
     region     : 'east',
     autoScroll: true,
     layout     : 'form',    
@@ -87,43 +98,7 @@ function createFormPanel(transunits){
   });
 }
 
-function createDatabaseGrid(url){
-  return new Ext.grid.GridPanel({
-    columns:[{
-        header: "catalog",
-        dataIndex: 'catalog'
-    },{
-        header: "source",
-        dataIndex: 'source'
-    },{
-        header: "target",
-        dataIndex: 'target'
-    }],
-    id: 'database-grid',
-    plain:true,
-    frame:false,
-    stripeRows: true, // stripe alternate rows
-    store: new Ext.data.JsonStore({
-      proxy : new Ext.data.HttpProxy({
-        api: {
-            read    : {url: url, method:'GET'},
-            create  : {url: url, method:'POST'},
-            update  : {url: url, method:'POST'},
-            destroy : {url: url, method:'POST'}
-        }    
-      }),
-      id: 'database-store',
-      root: 'messages',
-      idProperty: 'id',      
-      fields: ['id','catalog','source','target','params', 'is_translated']
-      //autoLoad:true
-    })
-  });
-  
-}
-
-
-function createCurrentGrid(url){
+function createGrid(url, id, storeId,data){
   return new Ext.grid.GridPanel({
     region:'center',
     columns:[{
@@ -140,11 +115,11 @@ function createCurrentGrid(url){
         dataIndex: 'catalog',
         hidden: true
     },{
-        header: "source",
+        header: trans_source,
         dataIndex: 'source'
     },{
       id:'target',
-        header: "target",
+        header: trans_target,
         dataIndex: 'target'
     },{
         id:'params',
@@ -152,7 +127,7 @@ function createCurrentGrid(url){
         dataIndex: 'params',
         hidden:true
     }],
-    id: 'current-grid',
+    id: id,
     tbar: [
       {
         text: 'hide translated',
@@ -160,9 +135,9 @@ function createCurrentGrid(url){
         enableToggle: true,
         handler : function(el){
           if(el.pressed){
-            Ext.StoreMgr.get('current-store').filter('is_translated',false);
+            Ext.StoreMgr.get(storeId).filter('is_translated',false);
           }else{
-            Ext.StoreMgr.get('current-store').filter('id');
+            Ext.StoreMgr.get(storeId).filter('id');
           }              
         }
       }
@@ -200,19 +175,38 @@ function createCurrentGrid(url){
         });
       }
     },
-    store: new Ext.data.GroupingStore({
+    store: createStore(storeId,url,data)
+  });
+  
+}
+
+function createStore(id, url, data){
+  var config = {
       groupField:'catalog',
-      id: 'current-store',
-      autoLoad: true,
-      data: _mg_i18n_messages,
+      id: id,
       reader : new Ext.data.JsonReader({
         root: 'messages',
         idProperty: 'id',
         fields: ['catalog','id','is_translated','params','source','target']                          
       })
-    })
-  });
-  
+    };
+    
+    if(data){
+      config.data = data;
+      config.autoLoad = true;
+    }else{
+      config.proxy = new Ext.data.HttpProxy({
+        api: {
+            read    : {url: url, method:'GET'},
+            create  : {url: url, method:'POST'},
+            update  : {url: url, method:'POST'},
+            destroy : {url: url, method:'POST'}
+        }    
+      });      
+      //config.autoLoad = true;
+    }
+    
+  return new Ext.data.GroupingStore(config);
 }
 
 /*

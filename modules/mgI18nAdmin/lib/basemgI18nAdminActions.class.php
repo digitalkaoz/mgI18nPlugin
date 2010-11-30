@@ -147,7 +147,7 @@ class basemgI18nAdminActions extends sfActions
         SELECT DISTINCT tc.name tc_name, tu.target tu_target, tu.source tu_source
         FROM trans_unit tu
         LEFT JOIN catalogue tc ON tu.cat_id = tc.cat_id
-        WHERE target LIKE ? OR source LIKE ?"
+        WHERE target LIKE ? OR source LIKE ? LIMIT 10"
       );
       
       $stm->execute(array($message, $message));
@@ -181,16 +181,16 @@ class basemgI18nAdminActions extends sfActions
       $this->getContext()->getConfiguration()->loadHelpers(array('Text'));
 
       $valid_messages[] = array(
-        'id'     => md5($catalogue.$message['message']),
         'catalog'=> $catalogue,
+        'id'     => md5($catalogue.$message['message']),
+        'is_translated' => $message['message'] != $this->context->getI18n()->__($message['message'], null, $original_catalogue),
+        'params' => '',
         'source' => $message['message'],
-        'target' => truncate_text($this->context->getI18n()->__($message['message'], null, $original_catalogue), 70),
-        //'params' => isset($message['params']) ? $message['params'] : array(), // not fully implemented yet,
-          'params' => '',
-        'is_translated' => $message['message'] != $this->context->getI18n()->__($message['message'], null, $original_catalogue)
+        'target' => truncate_text($this->context->getI18n()->__($message['message'], null, $original_catalogue), 70)
       );
     }
 
+    $this->getResponse()->setContentType('application/json');
     return $this->renderText(json_encode(array(
       'success' => true,
       'messages' => $valid_messages
