@@ -146,7 +146,16 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
             b.findParentByType('form').getForm().submit({
               url: Ext.ux.sfI18n.urls.update,
               waitMsg: Ext.ux.sfI18n.translations.save,
-              submitEmptyText: false
+              submitEmptyText: false,
+               failure : function(form,action){
+                trans_form_mask.hide();
+                Ext.Msg.show({
+                 title:'Error',
+                 msg: Ext.util.Format.stripTags(action.response.responseText),
+                 buttons: Ext.MessageBox.OK,
+                 icon: Ext.MessageBox.ERROR
+                });
+               }
             });
         }}
       ]
@@ -176,7 +185,7 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
           menuDisabled: true,
           groupable: false,
           hideable: false,
-          renderer : function(val){ return val ? '' : '<span class="ext-ux-sf18n-ok"></span>';}
+          renderer : function(val){return val ? '' : '<span class="ext-ux-sf18n-ok"></span>';}
       },{
           id: 'catalog',
           header: "catalog",
@@ -253,6 +262,8 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
         rowclick: function(grid,index){
           var record = grid.getStore().getAt(index);
           //ajax request to fetch all translations from the database
+          trans_form_mask = new Ext.LoadMask(Ext.ComponentMgr.get('current-translation-form').body);
+          trans_form_mask.show();
           Ext.Ajax.request({
              url: url,
              method: 'GET',
@@ -266,6 +277,7 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
              success : function(response, opts) {
               var data = Ext.decode(response.responseText);            
               var form = Ext.ComponentMgr.get('current-translation-form');
+              trans_form_mask.hide();
               //load records from store
               form.getForm().loadRecord(opts.record);
               //set translation fields from the response
@@ -274,6 +286,15 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
                   form.findById(data[i].code).setValue(data[i].value);
                 }
               }
+             },
+             failure : function(response,opts){
+              trans_form_mask.hide();
+              Ext.Msg.show({
+               title:'Error',
+               msg: Ext.util.Format.stripTags(response.responseText),
+               buttons: Ext.MessageBox.OK,
+               icon: Ext.MessageBox.ERROR
+              });
              }
           });
         }

@@ -70,7 +70,7 @@ class basemgI18nAdminActions extends sfActions
   public function executeUpdateTargets(sfWebRequest $request)
   {
 
-    $this->forward404If(!sfConfig::get('mg_i18n_enabled'));
+    $this->forward404If(sfConfig::get('mg_i18n_enabled'));
     
     $catalogue = $request->getParameter('catalogue');
     $source    = $request->getParameter('source');
