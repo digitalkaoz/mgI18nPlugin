@@ -216,12 +216,12 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
             if(el.pressed){
               store.filter([
                {property : 'is_translated', value: false},
-               {property : 'source', value: /[\D\S]/},
+               {property : 'source', value: /[\D]/},
               ]);              
             }else{
               store.filter([
                {property : 'id', value: /\w/},
-               {property : 'source', value: /\D\S/},
+               {property : 'source', value: /\D/},
               ]);              
             }              
           }
@@ -236,10 +236,14 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
         listeners: {
           render: function(paging){
             var store = paging.findParentByType('grid').getStore();
+            store.filter([
+               {property : 'id', value: /\w/},
+               {property : 'source', value: /\D/},
+              ]);
             if(store.proxy){
             paging.bindStore(store,true);
             }else{
-              paging.disable();
+              paging.hide();
             }
           }
         }
