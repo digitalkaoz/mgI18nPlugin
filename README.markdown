@@ -64,12 +64,11 @@ Installation
 
     * update the **view.yml**
 
-            #javascripts:
-            #  - http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
-            #  - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js
+            javascripts:
+              - ext-all.js
 
-            #stylesheets:
-            #  - http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/redmond/jquery-ui.css
+            stylesheets:
+              - /js/resources/ext-all.css
 
    * or manage your way ;)
 

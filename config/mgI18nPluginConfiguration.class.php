@@ -21,6 +21,7 @@ class mgI18nPluginConfiguration extends sfPluginConfiguration
   public function initialize()
   {
     $this->dispatcher->connect('context.load_factories', array($this, 'defineConfiguration'));
+    $this->dispatcher->connect('debug.web.load_panels', array('i18nDebugPanel','listenToLoadDebugWebPanelEvent'));
   }
 
   public function defineConfiguration(sfEvent $event)

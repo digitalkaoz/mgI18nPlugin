@@ -8,86 +8,109 @@ Ext.onReady(function(){
             win = new Ext.Window({
                 applyTo:'translation-window',
                 layout:'fit',
+                animTarget: button,
                 width:700,
                 height:450,
                 modal: true,
                 closeAction:'hide',
                 plain: true,
                 items: [
-                  new Ext.TabPanel({
-                    activeTab:0,
-                    deferredRender:false,
-                    border:false,
-                    items:[
-                      { 
-                        xtype: 'panel',
-                        title: trans_current,
-                        layout: 'border',
-                        
-                        frame:false,
-                        plain:true,
-                        items:[
-                          createGrid(current_url,'current-grid','current-store',_mg_i18n_messages),
-                          createFormPanel(transunits,'current-translation-form')
-                        ]
-                      },
-                      { 
-                        xtype: 'panel',
-                        title: trans_files,
-                        layout: 'border',
-                        
-                        frame:false,
-                        plain:true,
-                        items:[
-                          createGrid(file_url,'file-grid','file-store')
-                        ],
-                        listeners: {
-                          show: function(panel){
-                            panel.findByType('grid')[0].getStore().load();
-                          }
-                        }
-                      },
-                      { 
-                        xtype: 'panel',
-                        title: trans_database,
-                        layout: 'fit',
-                        frame:false,
-                        plain:true,
-                        items:[
-                          createGrid(database_url,'database-grid','database-store')
-                        ],
-                        listeners: {
-                          show: function(panel){
-                            panel.findByType('grid')[0].getStore().load();
-                          }
-                        }
-                      }
-                    ]
-                  })
+                  createTabPanel()
                 ]
-            });
-                      
+            });                      
         }
         
-        win.show(this);        
+        if(win.isVisible()){
+          win.hide();
+        }else{
+          win.show();
+        }
     });
 });
+
+function createTabPanel(){
+  return {
+    xtype: 'tabpanel',
+    activeTab:0,
+    deferredRender:false,
+    border:false,
+    items:[
+      { 
+        xtype: 'panel',
+        title: trans_current,
+        layout: 'border',
+
+        frame:false,
+        plain:true,
+        items:[
+          createGrid(current_url,'current-grid','current-store',_mg_i18n_messages),
+          createFormPanel(transunits,'current-translation-form')
+        ]
+      },
+      { 
+        xtype: 'panel',
+        title: trans_files,
+        layout: 'border',
+
+        frame:false,
+        plain:true,
+        items:[
+          createGrid(file_url,'file-grid','file-store')
+        ],
+        listeners: {
+          show: function(panel){
+            panel.findByType('grid')[0].getStore().load();
+          }
+        }
+      },
+      { 
+        xtype: 'panel',
+        title: trans_database,
+        layout: 'fit',
+        frame:false,
+        plain:true,
+        items:[
+          createGrid(database_url,'database-grid','database-store')
+        ],
+        listeners: {
+          show: function(panel){
+            panel.findByType('grid')[0].getStore().load();
+          }
+        }
+      }
+    ]
+  };
+}
 
 function createFormPanel(transunits, id){
   var fields = new Array();
   
+  fields.push({
+    xtype: 'hidden',
+    id: 'catalog',
+    name: 'catalogue'
+  });
+  
+  fields.push({
+    xtype: 'hidden',
+    id: 'source',
+    name: 'source'
+  });
+  
   Ext.each(transunits,function(unit){
-    this.push(new Ext.form.TextArea({
+    this.push({
+      xtype: 'textarea',
       id: unit.code,
       width: '90%',
       labelStyle: 'font-weight:bold;',
       grow: true,      
       fieldLabel : unit.name,
-      name       : unit.code
-    }));
+      name       : 'targets['+unit.code+']'
+    });
   },fields);
 
-  return new Ext.form.FormPanel({
+  return {
+    xtype: 'form',
     split: true,
     plain:true,
     frame:false,
@@ -103,13 +126,20 @@ function createFormPanel(transunits, id){
     width      : 250,
     items: fields,
     buttons: [
-      {text: 'Save'}
+      {text: 'Save',handler:function(b){
+          b.findParentByType('form').getForm().submit({
+            url: update_url,
+            waitMsg: 'Saving Translations',
+            submitEmptyText: false
+          });
+      }}
     ]
-  });
+  };
 }
 
 function createGrid(url, id, storeId,data){
-  return new Ext.grid.GridPanel({
+  return {
+    xtype: 'grid',
     region:'center',
     columns:[{
         header: "",
@@ -121,14 +151,16 @@ function createGrid(url, id, storeId,data){
           }
         }
     },{
+        id: 'catalog',
         header: "catalog",
         dataIndex: 'catalog',
         hidden: true
     },{
+        id: 'source',
         header: trans_source,
         dataIndex: 'source'
     },{
-      id:'target',
+        id:'target',
         header: trans_target,
         dataIndex: 'target'
     },{
@@ -168,15 +200,19 @@ function createGrid(url, id, storeId,data){
         //form.getForm().loadRecord(record);
         Ext.Ajax.request({
            url: url,
+           method: 'GET',
            autoAbort: true,
            params: {
              catalogue: record.data.catalog,
              source: record.data.source
            },
+           scope: this,
+           record: record,
            success : function(response, opts) {
-            var data = Ext.decode(response.responseText);
-            
+            var data = Ext.decode(response.responseText);            
             var form = Ext.ComponentMgr.get('current-translation-form');
+            form.getForm().loadRecord(opts.record);
+            
             for(var i=0;i<data.length;i++){
               if(form.findById(data[i].code)){
                 form.findById(data[i].code).setValue(data[i].value);
@@ -187,7 +223,7 @@ function createGrid(url, id, storeId,data){
       }
     },
     store: createStore(storeId,url,data)
-  });
+  };
   
 }
 

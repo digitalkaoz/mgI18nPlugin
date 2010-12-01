@@ -18,6 +18,7 @@
   current_url = '<?php echo url_for('@mg_i18n_get_targets') ?>';
   database_url = '<?php echo url_for('@mg_i18n_get_messages?type=database') ?>';
   file_url = '<?php echo url_for('@mg_i18n_get_messages?type=ajax_lib_application') ?>';
+  update_url = '<?php echo url_for('@mg_i18n_update') ?>'
   
   transunits = [
   <?php foreach(sfConfig::get('app_mgI18nPlugin_cultures_available') as $code => $name): ?>
@@ -33,8 +34,6 @@
   
 </script>
 
-<button id="translation-trigger"><?php echo __('title_translation', null, 'mgI18nAdmin') ?></button>
-
 <div id="translation-window">
   <div class="x-window-header"><span class="x-window-header-text"><?php echo __('title_translation', null, 'mgI18nAdmin') ?></span></div>
 </div>
@@ -42,8 +41,6 @@
 
 <link rel="stylesheet" type="text/css" media="screen" href="<?php echo $sf_request->getRelativeUrlRoot() ?>/mgI18nPlugin/css/translations-box.css" />
 
-<script type="text/javascript" src="http://dev.sencha.com/deploy/dev/examples/ux/TableGrid.js"></script>
-<script type="text/javascript" src="<?php echo $sf_request->getRelativeUrlRoot() ?>/mgI18nPlugin/js/gui.js" ></script>
 
 
 <?php
