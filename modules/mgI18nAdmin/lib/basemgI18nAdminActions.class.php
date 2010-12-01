@@ -138,18 +138,41 @@ class basemgI18nAdminActions extends sfActions
       }
 
       $messages = array_merge($messages, $ajax_messages);
+      
+      if($request->hasParameter('limit') && $request->hasParameter('start')){
+        $messages = array_slice($messages,$request->getGetParameter('start'),$request->getGetParameter('limit'));
+      }
+      
+      $count = count($messages);
     }
     else if($type == 'database')
     {
       $message = '%'.$request->getParameter('message').'%';
       
-      $stm = $pdo->prepare("
+      $query = "
+        SELECT DISTINCT count(*)
+        FROM trans_unit tu
+        LEFT JOIN catalogue tc ON tu.cat_id = tc.cat_id
+        WHERE target LIKE ? OR source LIKE ?";
+      $stm = $pdo->prepare($query);
+            
+      $stm->execute(array($message, $message));      
+      $count = $stm->fetch();
+      $count = $count[0];
+        
+      $query = "
         SELECT DISTINCT tc.name tc_name, tu.target tu_target, tu.source tu_source
         FROM trans_unit tu
         LEFT JOIN catalogue tc ON tu.cat_id = tc.cat_id
-        WHERE target LIKE ? OR source LIKE ? LIMIT 10"
-      );
+        WHERE target LIKE ? OR source LIKE ?";
       
+      if($request->hasParameter('limit') && $request->hasParameter('start')){
+        $query .= ' LIMIT '.$request->getGetParameter('start').', '.$request->getGetParameter('limit');
+      }
+      
+      
+      $stm = $pdo->prepare($query);
+            
       $stm->execute(array($message, $message));
       
       $messages = array();
@@ -193,6 +216,7 @@ class basemgI18nAdminActions extends sfActions
     $this->getResponse()->setContentType('application/json');
     return $this->renderText(json_encode(array(
       'success' => true,
+      'total' => $count,
       'messages' => $valid_messages
     )));
 

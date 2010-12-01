@@ -12,3 +12,30 @@ button#translation-trigger{
 #translation-window li{
   list-style: none;
 }
+.ext-ux-sfi18n-database{
+  background-image: url('/sf/sf_web_debug/images/database.png');
+}
+.ext-ux-sfi18n-site{
+  background-image: url('/sf/sf_web_debug/images/view.png');
+}
+.ext-ux-sfi18n-files{
+  background-image: url('/sf/sf_web_debug/images/memory.png');
+}
+
+.ext-ux-sf18n-ok{
+  background-image: url('/sf/sf_web_debug/images/log.png');
+  width:16px;
+  height:16px;
+  display:block;
+}
+
+#current-translation-form{
+  background-color:#CCD9E8;
+}
+
+#translation-window .x-tab-strip-spacer{
+  display:none;
+}
+#translation-window ul.x-tab-strip-top{
+  border:none;
+}
