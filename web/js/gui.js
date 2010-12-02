@@ -290,7 +290,7 @@ createGrid: function(url, id, storeId,data){
       scope: this,
       enableToggle: true,
       handler : function(el){
-        store = Ext.StoreMgr.get(storeId);
+        var store = Ext.StoreMgr.get(storeId);
         if(el.pressed){
           store.filter([
           {
