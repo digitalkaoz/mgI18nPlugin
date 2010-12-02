@@ -6,7 +6,7 @@ class i18nDebugPanel extends sfWebDebugPanel
   
   public static function listenToLoadDebugWebPanelEvent(sfEvent $event)
   {
-    if(sfConfig::get('mg_i18n_enabled',false))
+    if(sfConfig::get('mg_i18n_enabled',false) && !sfContext::getInstance()->getRequest()->isXmlHttpRequest())
     {
       $event->getSubject()->setPanel('i18n',new self($event->getSubject()));
     }
