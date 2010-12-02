@@ -367,6 +367,7 @@ createGrid: function(url, id, storeId,data){
           success : function(response, opts) {
             var data = Ext.decode(response.responseText);            
             var form = Ext.ComponentMgr.get('current-translation-form');
+            Ext.ux.sfI18n.formHook();
             trans_form_mask.hide();
             //load records from store
             form.getForm().loadRecord(opts.record);

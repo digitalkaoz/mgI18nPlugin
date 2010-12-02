@@ -26,4 +26,7 @@
     translated: '<?php echo __('label_hide_translated_page', null, 'mgI18nAdmin') ?>',
     deleteit : '<?php echo __('Delete') ?>'
   };  
+  
+  //inject your custom form functionalities here
+  Ext.ux.sfI18n.formHook = function(){};
 </script>
