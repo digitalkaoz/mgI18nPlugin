@@ -27,5 +27,3 @@
     deleteit : '<?php echo __('Delete') ?>'
   };  
 </script>
-
-<?php echo stylesheet_tag($sf_request->getRelativeUrlRoot().'/mgI18nPlugin/css/translations-box.css');?>

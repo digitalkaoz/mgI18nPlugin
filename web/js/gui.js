@@ -4,6 +4,7 @@ Ext.ns('Ext.ux.sfI18n');
  * handles the debug toolbar button click
  */
 Ext.ux.sfI18n.handleTrigger = function(trigger){
+  
   var win = window.translation_win;
 
   Ext.get(trigger).on('click', function(trigger){

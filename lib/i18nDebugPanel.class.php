@@ -6,14 +6,17 @@ class i18nDebugPanel extends sfWebDebugPanel
   
   public static function listenToLoadDebugWebPanelEvent(sfEvent $event)
   {
-    $event->getSubject()->setPanel('i18n',new self($event->getSubject()));
+    if(sfConfig::get('mg_i18n_enabled',false))
+    {
+      $event->getSubject()->setPanel('i18n',new self($event->getSubject()));
+    }
   }
 
   public function getTitle()
   {
     if(sfConfig::get('sf_i18n',false))
     {
-      $context = sfcontext::getInstance();
+      $context = sfContext::getInstance();
       $context->getConfiguration()->loadHelpers(array('I18N'));
       $this->label = __('title_translation', null, 'mgI18nAdmin');
     }
@@ -27,7 +30,8 @@ class i18nDebugPanel extends sfWebDebugPanel
  
   public function getPanelContent()
   {
-    return '<script type="text/javascript" src="/mgI18nPlugin/js/gui.js" ></script>';
+    return '<script type="text/javascript" src="/mgI18nPlugin/js/gui.js" ></script>
+      <link href="/mgI18nPlugin/css/translations-box.css" media="screen" type="text/css" rel="stylesheet">';
   }
   
   public function getPanelTitle()
