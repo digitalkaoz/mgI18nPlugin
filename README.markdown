@@ -60,7 +60,7 @@ Installation
 
         ./symfony i18n:mg-create-table frontend
 
- * Install ExtJS, 2 options
+ * Install ExtJS
 
     * update the **view.yml**
 
@@ -69,8 +69,6 @@ Installation
 
             stylesheets:
               - /js/resources/ext-all.css
-
-   * or manage your way ;)
 
  * publish plugin asset
  
@@ -91,6 +89,8 @@ Installation
  * clear cache
 
         ./symfony cc
+
+ * click the **Translations Button in your WebDebug Toolbar**
 
 
 Registering Event

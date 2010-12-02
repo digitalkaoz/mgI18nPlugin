@@ -12,6 +12,8 @@ class i18nDebugPanel extends sfWebDebugPanel
   {
     if(sfConfig::get('sf_i18n',false))
     {
+      $context = sfcontext::getInstance();
+      $context->getConfiguration()->loadHelpers(array('I18N'));
       $label = __('title_translation', null, 'mgI18nAdmin');
     }
     else
