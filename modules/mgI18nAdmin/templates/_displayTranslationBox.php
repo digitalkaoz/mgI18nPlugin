@@ -39,8 +39,8 @@
     filter : '<?php echo __('label_filter_list', null, 'mgI18nAdmin') ?>',
     save : '<?php echo __('btn_save_translation', null, 'mgI18nAdmin') ?>',
     title: '<?php echo __('title_translation', null, 'mgI18nAdmin') ?>',
-    translated: '<?php echo __('label_hide_translated_page', null, 'mgI18nAdmin') ?>'
-    
+    translated: '<?php echo __('label_hide_translated_page', null, 'mgI18nAdmin') ?>',
+    deleteit : '<?php echo __('Delete') ?>'
   };  
 </script>
 
