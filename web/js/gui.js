@@ -153,6 +153,7 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
       width      : 250,
       items: fields,
       buttons: [
+      //the save button
       {
         text: Ext.ux.sfI18n.translations.save,
         handler:function(b){
@@ -175,7 +176,7 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
           });
         }
       },
-
+      //the delete button
       {
         text: Ext.ux.sfI18n.translations.deleteit,
         id:'trans-delete', 
@@ -198,7 +199,6 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
                   waitMsg: Ext.ux.sfI18n.translations.deleteit,
                   submitEmptyText: false,
                   success: function(form,action){
-                    //TODO remove grid row
                     form.loadRecord(new Ext.data.Record());
                     Ext.StoreMgr.get('current-store').remove(form.record);
                     form.record = null;
