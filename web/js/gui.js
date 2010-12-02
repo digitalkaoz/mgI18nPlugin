@@ -3,10 +3,10 @@ Ext.ns('Ext.ux.sfI18n');
 Ext.ux.sfI18n.handleTrigger = function(trigger){
   var win = window.translation_win;
 
-  Ext.get(trigger).on('click', function(){
+  Ext.get(trigger).on('click', function(trigger){
     // create the window on the first click and reuse on subsequent clicks
     if(!win){
-      win = new Ext.ux.sfI18n.Window();
+      win = new Ext.ux.sfI18n.Window({animateTarget:this});
     }        
     if(win.isVisible()){
       win.hide();
