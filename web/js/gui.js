@@ -35,7 +35,7 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
       width:700,
       height:450,
       title: Ext.ux.sfI18n.translations.title,
-      modal: true,
+      //modal: true,
       border: false,
       closeAction:'hide',
       plain: true,
