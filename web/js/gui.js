@@ -147,7 +147,10 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
               url: Ext.ux.sfI18n.urls.update,
               waitMsg: Ext.ux.sfI18n.translations.save,
               submitEmptyText: false,
-               failure : function(form,action){
+              success: function(form,action){
+                //TODO update grid row
+              },
+              failure : function(form,action){
                 trans_form_mask.hide();
                 Ext.Msg.show({
                  title:'Error',
@@ -157,6 +160,44 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
                 });
                }
             });
+        }},
+        {text: 'delete',id:'trans-delete', handler:function(b){
+              // Show a dialog using config options:
+              Ext.Msg.show({
+               title:'Delete Translation?',
+               msg: 'You are about to delete a Translation!',
+               buttons: Ext.Msg.YESNOCANCEL,
+               animEl: b,
+               icon: Ext.MessageBox.QUESTION,
+               fn: function(btn){
+                 if(btn == 'yes'){
+                  b.findParentByType('form').getForm().submit({
+                  url: Ext.ux.sfI18n.urls.update,
+                  method: 'POST',
+                  params: {
+                    'delete' : true
+                  },
+                  waitMsg: Ext.ux.sfI18n.translations.save,
+                  submitEmptyText: false,
+                  success: function(form,action){
+                    //TODO remove grid row
+                    form.loadRecord(new Ext.data.Record());
+                    Ext.StoreMgr.get('current-store').remove(form.record);
+                    form.record = null;
+                  },
+                  failure : function(form,action){
+                    trans_form_mask.hide();
+                    Ext.Msg.show({
+                     title:'Error',
+                     msg: Ext.util.Format.stripTags(action.response.responseText),
+                     buttons: Ext.MessageBox.OK,
+                     icon: Ext.MessageBox.ERROR
+                    });
+                   }
+                });                 
+               }               
+             }
+              });
         }}
       ]
     };
@@ -280,11 +321,18 @@ Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
               trans_form_mask.hide();
               //load records from store
               form.getForm().loadRecord(opts.record);
+              form.getForm().record = opts.record;
               //set translation fields from the response
               for(var i=0;i<data.length;i++){
                 if(form.findById(data[i].code)){
                   form.findById(data[i].code).setValue(data[i].value);
                 }
+              }
+              
+              if(opts.record.data.is_translated){
+                form.buttons[1].enable();
+              }else{
+                form.buttons[1].disable();
               }
              },
              failure : function(response,opts){

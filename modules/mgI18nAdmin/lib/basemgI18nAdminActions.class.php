@@ -70,8 +70,8 @@ class basemgI18nAdminActions extends sfActions
   public function executeUpdateTargets(sfWebRequest $request)
   {
 
-    $this->forward404If(sfConfig::get('mg_i18n_enabled'));
-    
+    $this->forward404If(!sfConfig::get('mg_i18n_enabled'));
+        
     $catalogue = $request->getParameter('catalogue');
     $source    = $request->getParameter('source');
     $targets   = $request->getParameter('targets');
@@ -87,7 +87,12 @@ class basemgI18nAdminActions extends sfActions
     $form->bind($params);
     if($form->isValid())
     {
-      $form->save();
+      //TODO make it restful
+      if($request->hasParameter('delete')){
+        $form->delete();
+      }else{
+        $form->save();
+      }
 
       // allow to tweak the clear_cache method
       $this->getContext()->getEventDispatcher()->notifyUntil(new sfEvent($params, 'mgI18n.clear_cache'));
