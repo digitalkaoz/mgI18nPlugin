@@ -317,10 +317,11 @@ createGrid: function(url, id, storeId,data){
           ]);              
         }              
       }
-    },{xtype:'tbtext', text:'Filter:'},{
+    },{
       xtype: 'textfield',
       enableKeyEvents: true,
       fieldLabel: 'Filter',
+      emptyText: 'Filter...',
       listeners:{
         keyup :function(field,e){
           var store = field.findParentByType('grid').getStore();
