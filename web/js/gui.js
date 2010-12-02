@@ -1,5 +1,8 @@
 Ext.ns('Ext.ux.sfI18n');
 
+/**
+ * handles the debug toolbar button click
+ */
 Ext.ux.sfI18n.handleTrigger = function(trigger){
   var win = window.translation_win;
 
@@ -8,14 +11,13 @@ Ext.ux.sfI18n.handleTrigger = function(trigger){
     if(!win){
       win = new Ext.ux.sfI18n.Window({animateTarget:this});
     }        
-    if(win.isVisible()){
-      win.hide();
-    }else{
-      win.show();
-    }
+    win.setVisible(!win.isVisible());
   });  
 }
   
+/**
+ * the translations window
+ */  
 Ext.ux.sfI18n.Window = Ext.extend(Ext.Window, {
   
   /**
