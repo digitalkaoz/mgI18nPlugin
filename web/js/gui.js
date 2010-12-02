@@ -317,6 +317,37 @@ createGrid: function(url, id, storeId,data){
           ]);              
         }              
       }
+    },{xtype:'tbtext', text:'Filter:'},{
+      xtype: 'textfield',
+      enableKeyEvents: true,
+      fieldLabel: 'Filter',
+      listeners:{
+        keyup :function(field,e){
+          var store = field.findParentByType('grid').getStore();
+          
+          if(!field.getRawValue().length){
+            store.filter([
+            {
+              property : 'id', 
+              value: /\w/
+            },
+            {
+              property : 'source', 
+              value: /\D/
+            },
+            ]);            
+          }else{
+            var regex = new RegExp(field.getRawValue(),'i');
+            
+            store.filterBy(function(record,id){
+              if(!record.data.source.match(regex) && !record.data.target.match(regex)){
+                return false;
+              }
+              return true;
+            });            
+          }
+        }
+      }      
     }
     ],
     bbar: {
@@ -333,13 +364,13 @@ createGrid: function(url, id, storeId,data){
             property : 'id', 
             value: /\w/
           },
-
           {
             property : 'source', 
             value: /\D/
           },
           ]);
           if(store.proxy){
+            paging.findParentByType('grid').getTopToolbar().hide();
             paging.bindStore(store,true);
           }else{
             paging.hide();
