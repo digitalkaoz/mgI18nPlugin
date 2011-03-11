@@ -341,10 +341,10 @@ createGrid: function(url, id, storeId,data){
             var regex = new RegExp(field.getRawValue(),'i');
             
             store.filterBy(function(record,id){
-              if(!record.data.source.match(regex) && !record.data.target.match(regex)){
-                return false;
+              if(String(record.data.source).search(regex) != -1){
+                return true;
               }
-              return true;
+              return false;
             });            
           }
         }
